@@ -65,7 +65,7 @@ class _MainScreenState extends State<MainScreen> {
                 shape: BoxShape.circle,
                 gradient: RadialGradient(
                   colors: [
-                    Theme.of(context).colorScheme.primary.withOpacity(0.3),
+                    Theme.of(context).colorScheme.primary.withOpacity(0.2),
                     Colors.transparent,
                   ],
                 ),
@@ -128,6 +128,13 @@ class _MainScreenState extends State<MainScreen> {
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
+  String _getGreeting() {
+    final hour = DateTime.now().hour;
+    if (hour < 12) return "Morning! Ready to dodge the crowd?";
+    if (hour < 17) return "Afternoon grind! Let's find a spot.";
+    return "Evening! Campus is winding down... mostly.";
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -135,18 +142,35 @@ class HomeScreen extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        title: Text(
-          'Campus Pulse',
-          style: GoogleFonts.outfit(
-            fontWeight: FontWeight.w800,
-            fontSize: 26,
-            letterSpacing: -0.5,
-          ),
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Campus Pulse',
+              style: GoogleFonts.outfit(
+                fontWeight: FontWeight.w800,
+                fontSize: 26,
+                letterSpacing: -0.5,
+              ),
+            ),
+            Text(
+              _getGreeting(),
+              style: TextStyle(
+                fontSize: 12,
+                color: Colors.white.withOpacity(0.6),
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
         ),
         actions: [
           IconButton(
             icon: const Icon(Icons.notifications_active_outlined),
-            onPressed: () {},
+            onPressed: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text("No new alerts. You're safe! 🛡️")),
+              );
+            },
           ).animate(onPlay: (controller) => controller.repeat()).shimmer(duration: 2.seconds),
         ],
       ),
@@ -191,11 +215,12 @@ class HomeScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: 4),
                       const Text(
-                        'Central Library 2nd Floor is less crowded right now! Go now!',
+                        'Central Library 2nd Floor is completely empty right now. Time to speedrun those assignments!',
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: 16,
+                          fontSize: 15,
                           fontWeight: FontWeight.w600,
+                          height: 1.3,
                         ),
                       ),
                     ],
@@ -210,15 +235,15 @@ class HomeScreen extends StatelessWidget {
             style: GoogleFonts.outfit(fontSize: 22, fontWeight: FontWeight.bold),
           ).animate().fadeIn(delay: 200.ms),
           const SizedBox(height: 16),
-          _buildCrowdItem('Central Mess', 'Packed', const Color(0xFFFF4B4B), Icons.restaurant, 0)
+          _buildCrowdItem('Main Mess', 'It\'s a Warzone', const Color(0xFFFF4B4B), Icons.restaurant, 0)
               .animate().fadeIn(delay: 300.ms).slideX(begin: 0.1),
-          _buildCrowdItem('Library 1st Floor', 'Okay', const Color(0xFFFFB23F), Icons.menu_book, 1)
+          _buildCrowdItem('Library 1st Floor', 'Getting busy', const Color(0xFFFFB23F), Icons.menu_book, 1)
               .animate().fadeIn(delay: 400.ms).slideX(begin: 0.1),
-          _buildCrowdItem('Library 2nd Floor', 'Empty', const Color(0xFF00FFC6), Icons.local_library, 2)
+          _buildCrowdItem('Library 2nd Floor', 'Ghost Town', const Color(0xFF00FFC6), Icons.local_library, 2)
               .animate().fadeIn(delay: 500.ms).slideX(begin: 0.1),
-          _buildCrowdItem('Canteen', 'Packed', const Color(0xFFFF4B4B), Icons.coffee, 3)
+          _buildCrowdItem('Canteen Queue', 'Abandon Hope', const Color(0xFFFF4B4B), Icons.coffee, 3)
               .animate().fadeIn(delay: 600.ms).slideX(begin: 0.1),
-          _buildCrowdItem('Gymnasium', 'Okay', const Color(0xFFFFB23F), Icons.fitness_center, 4)
+          _buildCrowdItem('CS Labs', 'Chill', const Color(0xFF00FFC6), Icons.computer, 4)
               .animate().fadeIn(delay: 700.ms).slideX(begin: 0.1),
         ],
       ),
@@ -257,6 +282,7 @@ class HomeScreen extends StatelessWidget {
               color: color,
               fontWeight: FontWeight.bold,
               letterSpacing: 0.5,
+              fontSize: 12,
             ),
           ),
         ),
@@ -296,7 +322,7 @@ class MapScreen extends StatelessWidget {
                   )
                 ],
               ),
-              child: const Icon(Icons.map_rounded, size: 100, color: Color(0xFF6C63FF))
+              child: const Icon(Icons.radar, size: 100, color: Color(0xFF6C63FF))
                   .animate(onPlay: (controller) => controller.repeat(reverse: true))
                   .scaleXY(end: 1.1, duration: 2.seconds)
                   .then()
@@ -309,16 +335,16 @@ class MapScreen extends StatelessWidget {
             ).animate().fadeIn(delay: 200.ms),
             const SizedBox(height: 12),
             Text(
-              'Zoom in to see live crowd densities.',
+              'Pulling live telemetry from 14 spots...',
               style: TextStyle(fontSize: 16, color: Colors.white.withOpacity(0.5)),
             ).animate().fadeIn(delay: 300.ms),
             const SizedBox(height: 40),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                _buildLegend(const Color(0xFF00FFC6), 'Empty').animate().fadeIn(delay: 400.ms),
+                _buildLegend(const Color(0xFF00FFC6), 'Ghost Town').animate().fadeIn(delay: 400.ms),
                 const SizedBox(width: 24),
-                _buildLegend(const Color(0xFFFFB23F), 'Okay').animate().fadeIn(delay: 500.ms),
+                _buildLegend(const Color(0xFFFFB23F), 'Survivable').animate().fadeIn(delay: 500.ms),
                 const SizedBox(width: 24),
                 _buildLegend(const Color(0xFFFF4B4B), 'Packed').animate().fadeIn(delay: 600.ms),
               ],
@@ -338,7 +364,7 @@ class MapScreen extends StatelessWidget {
           decoration: BoxDecoration(color: color, shape: BoxShape.circle),
         ),
         const SizedBox(width: 8),
-        Text(label, style: const TextStyle(fontWeight: FontWeight.w600)),
+        Text(label, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 12)),
       ],
     );
   }
@@ -363,7 +389,7 @@ class _CheckInScreenState extends State<CheckInScreen> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        title: const Text('Tactile Telemetry', style: TextStyle(fontWeight: FontWeight.bold)),
+        title: const Text('Ground Truth Check-in', style: TextStyle(fontWeight: FontWeight.bold)),
       ),
       body: Padding(
         padding: const EdgeInsets.all(24),
@@ -371,7 +397,7 @@ class _CheckInScreenState extends State<CheckInScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             const Text(
-              'Select your location',
+              'Where are you suffering right now?',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: Colors.white70),
             ).animate().fadeIn(),
             const SizedBox(height: 16),
@@ -393,6 +419,7 @@ class _CheckInScreenState extends State<CheckInScreen> {
                     DropdownMenuItem(value: 'lib1', child: Text('Library 1st Floor')),
                     DropdownMenuItem(value: 'lib2', child: Text('Library 2nd Floor')),
                     DropdownMenuItem(value: 'canteen', child: Text('Canteen')),
+                    DropdownMenuItem(value: 'gym', child: Text('Gym')),
                   ],
                   onChanged: (val) => setState(() => selectedLocation = val),
                 ),
@@ -400,16 +427,16 @@ class _CheckInScreenState extends State<CheckInScreen> {
             ).animate().fadeIn(delay: 100.ms),
             const SizedBox(height: 40),
             const Text(
-              'How crowded is it right now?',
+              'What\'s the vibe?',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: Colors.white70),
             ).animate().fadeIn(delay: 200.ms),
             const SizedBox(height: 24),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                _buildStatusButton('Empty', Icons.waves, const Color(0xFF00FFC6)),
+                _buildStatusButton('Dead', Icons.ac_unit, const Color(0xFF00FFC6)),
                 _buildStatusButton('Okay', Icons.groups, const Color(0xFFFFB23F)),
-                _buildStatusButton('Packed', Icons.warning_amber, const Color(0xFFFF4B4B)),
+                _buildStatusButton('Chaos', Icons.local_fire_department, const Color(0xFFFF4B4B)),
               ],
             ),
             const Spacer(),
@@ -435,7 +462,7 @@ class _CheckInScreenState extends State<CheckInScreen> {
                       ? () {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                              content: const Text('Awesome! +10 Pulse Points earned 🌟'),
+                              content: const Text('Intel received. You earned +15 Pulse Points! 🕵️'),
                               behavior: SnackBarBehavior.floating,
                               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                               backgroundColor: const Color(0xFF6C63FF),
@@ -449,7 +476,7 @@ class _CheckInScreenState extends State<CheckInScreen> {
                       : null,
                   child: const Center(
                     child: Text(
-                      'Broadcast Status',
+                      'Broadcast Intel',
                       style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
                     ),
                   ),
@@ -503,6 +530,24 @@ class _CheckInScreenState extends State<CheckInScreen> {
 class LeaderboardScreen extends StatelessWidget {
   const LeaderboardScreen({super.key});
 
+  final List<String> realisticNames = const [
+    "Caffeine Addict",
+    "Library Ghost",
+    "John Doe",
+    "Lost Freshman",
+    "Last Min Crammer",
+    "Procrastinator Pro",
+    "Mess Survivor",
+    "Topper™",
+    "Sleepless",
+    "Vending Machine Fan",
+    "Backbencher",
+    "Assignment Evader",
+    "Campus Stray Dog",
+    "Phantom",
+    "Canteen Regular"
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -510,7 +555,7 @@ class LeaderboardScreen extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        title: const Text('Rankings', style: TextStyle(fontWeight: FontWeight.bold)),
+        title: const Text('Hall of Fame', style: TextStyle(fontWeight: FontWeight.bold)),
       ),
       body: Column(
         children: [
@@ -526,9 +571,9 @@ class LeaderboardScreen extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                _buildStatColumn('Your Points', '1,250', const Color(0xFF00FFC6)),
+                _buildStatColumn('Your Intel Score', '1,420', const Color(0xFF00FFC6)),
                 Container(width: 1, height: 50, color: Colors.white.withOpacity(0.1)),
-                _buildStatColumn('Hot Streak', '12 🔥', const Color(0xFFFFB23F)),
+                _buildStatColumn('Current Streak', '15 🔥', const Color(0xFFFFB23F)),
               ],
             ),
           ).animate().slideY(begin: -0.2).fadeIn(),
@@ -575,7 +620,7 @@ class LeaderboardScreen extends StatelessWidget {
                       CircleAvatar(
                         backgroundColor: Colors.primaries[index % Colors.primaries.length].withOpacity(0.2),
                         child: Text(
-                          'S${index + 1}',
+                          realisticNames[index].substring(0, 1),
                           style: TextStyle(
                             color: Colors.primaries[index % Colors.primaries.length],
                             fontWeight: FontWeight.bold,
@@ -583,16 +628,19 @@ class LeaderboardScreen extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(width: 16),
-                      Text(
-                        'Student ${index + 1}',
-                        style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+                      Expanded(
+                        child: Text(
+                          realisticNames[index],
+                          style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
-                      const Spacer(),
                       Text(
-                        '${2500 - (index * 120)} pts',
+                        '${3000 - (index * 115)} pts',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: Theme.of(context).colorScheme.secondary,
+                          fontSize: 13,
                         ),
                       ),
                     ],
@@ -612,7 +660,7 @@ class LeaderboardScreen extends StatelessWidget {
         Text(
           value,
           style: GoogleFonts.outfit(
-            fontSize: 32,
+            fontSize: 28,
             fontWeight: FontWeight.w800,
             color: color,
           ),
@@ -623,6 +671,7 @@ class LeaderboardScreen extends StatelessWidget {
           style: const TextStyle(
             color: Colors.white70,
             fontWeight: FontWeight.w500,
+            fontSize: 12,
           ),
         ),
       ],
