@@ -66,4 +66,20 @@ To run the app from the source code, you'll need the [Flutter SDK](https://docs.
 
 ---
 
+## 🔮 Future Scope & Backend Architecture
+
+Since this is currently a high-fidelity frontend prototype, here is the roadmap for how the dynamic features will be fully functional once connected to a backend (e.g., **Firebase** or **Supabase**):
+
+### 1. Dynamic Aura Heatmap
+- **How it will update**: The heatmap will integrate with **Google Maps Platform** or **Mapbox SDK**.
+- **Data Pipeline**: Whenever a user submits a "Ground Truth Check-in" from the Report screen, a POST request will be sent to the database updating the crowd density index for that specific geolocation.
+- **Rendering**: The heatmap layer on the Map screen will pull this real-time density data via a WebSockets or Firebase Snapshot listener, dynamically intensifying the glowing radius (Aura) over locations with high "Packed" reports.
+
+### 2. Earning Aura (Pulse) Points
+- **Taking Input**: The "Check-in" screen securely captures the user's location via GPS (to prevent spoofing) and their selected crowd status.
+- **Updating Score**: Upon clicking "Broadcast Intel", a backend cloud function will verify the input and automatically increment the user's "Aura Points" by +15 in the `users` database table.
+- **Leaderboard Sync**: The "Hall of Fame" screen will fetch the top 15 users globally from the database, ordering them by their total Aura points in descending order.
+
+---
+
 *Designed and developed to ace the Campus Pulse E-Labs challenge.* 🚀
